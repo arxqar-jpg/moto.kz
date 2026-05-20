@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}{{ listing.title }} · Moto KZ{% endblock %}
+{% block content %}
+<section class="detail-layout">
+  <div class="detail-gallery" data-reveal>
+    <div class="detail-media premium-car-bg">
+      {% if listing.image_path %}
+        <img src="{{ listing.image_path }}" alt="{{ listing.title }}">
+      {% else %}
+        <img class="detail-car-art" src="/static/hero-car.svg" alt="{{ listing.brand }} {{ listing.model }}">
+      {% endif %}
+    </div>
+    <div class="detail-chips">
+      <span>{{ listing.year }}</span><span>{{ listing.transmission }}</span><span>{{ listing.fuel }}</span><span>{{ listing.engine_volume }} л</span>
+    </div>
+  </div>
+  <aside class="seller-panel glass-card" data-reveal>
+    <p class="status {% if listing.is_active %}active{% else %}draft{% endif %}">{% if listing.is_active %}Жарияланған{% else %}Kaspi төлем күтіп тұр{% endif %}</p>
+    <h1>{{ listing.title }}</h1>
+    <p class="price big">{{ '{:,}'.format(listing.price).replace(',', ' ') }} ₸</p>
+    <p class="muted">{{ listing.city }} · {{ listing.created_at.strftime('%d.%m.%Y') }}</p>
+    <button class="contact-button magnetic" data-phone="{{ listing.phone }}">Телефонды көрсету</button>
+    <p class="phone-box hidden"></p>
+    <form method="post" action="/listings/{{ listing.id }}/favorite">
+      <button class="secondary-wide" type="submit">{% if is_favorite %}★ Избранноеден алу{% else %}☆ Избранноеге қосу{% endif %}</button>
+    </form>
+    {% if user and user.id == listing.owner_id %}
+      <div class="owner-actions">
+        <a class="secondary-button" href="/listings/{{ listing.id }}/edit">Өңдеу</a>
+        {% if not listing.is_active %}<a class="kaspi-button" href="/payments/{{ listing.id }}"><img src="/static/kaspi-logo.svg" alt="Kaspi"> Kaspi төлеу</a>{% endif %}
+        <form method="post" action="/listings/{{ listing.id }}/delete" onsubmit="return confirm('Өшіруге сенімдісіз бе?')">
+          <button class="danger" type="submit">Өшіру</button>
+        </form>
+      </div>
+    {% endif %}
+  </aside>
+</section>
+
+{% if user and user.id == listing.owner_id and not listing.is_active %}
+<section class="kaspi-strip detail-kaspi-strip" data-reveal>
+  <div class="kaspi-strip-left">
+    <img src="/static/kaspi-logo.svg" alt="Kaspi" class="kaspi-strip-logo">
+    <div>
+      <b>Бұл объявление әлі жарияланбаған</b>
+      <span>Kaspi QR/link арқылы {{ listing_fee }} ₸ төлем жаса да каталогқа шығар.</span>
+    </div>
+  </div>
+  <a class="kaspi-button" href="/payments/{{ listing.id }}">Kaspi төлемге өту</a>
+</section>
+{% endif %}
+
+<section class="specs-card glass-card" data-reveal>
+  <h2>Характеристика</h2>
+  <div class="spec-grid">
+    <div><span>Бренд</span><b>{{ listing.brand }}</b></div>
+    <div><span>Модель</span><b>{{ listing.model }}</b></div>
+    <div><span>Жылы</span><b>{{ listing.year }}</b></div>
+    <div><span>Пробег</span><b>{{ '{:,}'.format(listing.mileage).replace(',', ' ') }} км</b></div>
+    <div><span>Кузов</span><b>{{ listing.body_type }}</b></div>
+    <div><span>Отын</span><b>{{ listing.fuel }}</b></div>
+    <div><span>Коробка</span><b>{{ listing.transmission }}</b></div>
+    <div><span>Мотор</span><b>{{ listing.engine_volume }} л</b></div>
+    <div><span>Түсі</span><b>{{ listing.color }}</b></div>
+  </div>
+</section>
+
+<section class="description-card glass-card" data-reveal>
+  <h2>Описание</h2>
+  <p>{{ listing.description or 'Описание жазылмаған.' }}</p>
+</section>
+{% endblock %}

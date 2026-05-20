@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="kk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}MotoKZ{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css?v=7">
+</head>
+<body>
+  <div class="scroll-progress" aria-hidden="true"></div>
+  <div class="page-bg" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a href="/" class="brand" aria-label="MotoKZ home">
+      <span class="brand-mark">M</span>
+      <span class="brand-copy"><strong>MotoKZ</strong><small>Kazakhstan auto market</small></span>
+    </a>
+    <nav class="nav" aria-label="Main navigation">
+      <a href="/#catalog">Каталог</a>
+      <a href="/listings/new">Объявление беру</a>
+      {% if user %}
+        <a href="/my-listings">Менің объявлениям</a>
+        <a href="/favorites">Избранное</a>
+        <form method="post" action="/logout" class="inline-form"><button class="nav-logout" type="submit">Шығу</button></form>
+      {% else %}
+        <a href="/login">Кіру</a>
+        <a href="/register" class="nav-primary">Тіркелу</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  {% if flash %}<div class="flash {{ flash.kind }}" data-reveal>{{ flash.message }}</div>{% endif %}
+
+  <main class="container">{% block content %}{% endblock %}</main>
+
+  <footer class="footer">
+    <strong>MotoKZ</strong>
+    <span>Python FastAPI marketplace prototype</span>
+    <a href="/api/listings">API</a>
+    <a href="/health">Health</a>
+  </footer>
+  <script src="/static/script.js?v=7"></script>
+</body>
+</html>

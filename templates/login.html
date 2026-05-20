@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Кіру · Moto KZ{% endblock %}
+{% block content %}
+<section class="auth-card">
+  <h1>Аккаунтқа кіру</h1>
+  <form method="post" action="/login" class="stack">
+    <label>Email<input type="email" name="email" required placeholder="you@email.com"></label>
+    <label>Пароль<input type="password" name="password" required placeholder="••••••••"></label>
+    <button type="submit">Кіру</button>
+  </form>
+  <p class="muted center">Аккаунт жоқ па? <a href="/register">Тіркелу</a></p>
+</section>
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Kaspi төлем · Moto KZ{% endblock %}
+{% block content %}
+<section class="payment-hero" data-reveal>
+  <div>
+    <p class="eyebrow">Kaspi publish payment</p>
+    <h1>Объявлениені Kaspi арқылы жариялау</h1>
+    <p>{{ listing.title }} — төлемнен кейін каталогта ACTIVE болып көрінеді.</p>
+  </div>
+  <img src="/static/kaspi-logo.svg" alt="Kaspi" class="payment-hero-logo">
+</section>
+
+<section class="payment-layout kaspi-payment-layout">
+  <div class="payment-card kaspi-main-card" data-reveal>
+    <div class="payment-status-bar">
+      <span class="status-step done">1. Объявление</span>
+      <span class="status-line"></span>
+      <span class="status-step active">2. Kaspi төлем</span>
+      <span class="status-line"></span>
+      <span class="status-step">3. Жариялау</span>
+    </div>
+
+    <div class="listing-summary">
+      <div class="summary-icon">🚘</div>
+      <div>
+        <span>Төленетін объявление</span>
+        <b>{{ listing.title }}</b>
+      </div>
+    </div>
+
+    <div class="invoice-row premium-invoice"><span>Публикация ақысы</span><b>{{ listing_fee }} ₸</b></div>
+
+    {% if listing.is_active %}
+      <div class="success-box">Бұл объявление төленген және жарияланған.</div>
+      <a class="hero-button" href="/listings/{{ listing.id }}">Объявлениеге өту</a>
+    {% else %}
+      <div class="kaspi-pay-grid">
+        <div class="qr-panel">
+          <div class="qr-frame">
+            <img src="/static/kaspi-qr.svg" alt="Kaspi QR төлем">
+          </div>
+          <p>Телефоннан Kaspi қосымшасымен QR скан жаса.</p>
+        </div>
+        <div class="kaspi-action-panel">
+          <img src="/static/kaspi-logo.svg" alt="Kaspi" class="kaspi-big-logo">
+          <h2>Kaspi арқылы төлеу</h2>
+          <p>Батырма Kaspi төлем бетіне апарады. Төлеген соң осы бетке қайтып, “Төледім — жариялау” бас.</p>
+          <div class="payment-buttons">
+            <a class="kaspi-button big magnetic" href="{{ kaspi_pay_url }}" target="_blank" rel="noopener">Kaspi Pay ашу</a>
+            <button type="button" class="secondary-button copy-link" data-copy="{{ kaspi_pay_url }}">Сілтемені көшіру</button>
+          </div>
+          <form method="post" action="/payments/{{ listing.id }}" class="stack confirm-payment-form">
+            <input type="hidden" name="payment_method" value="kaspi">
+            <label>Чек/комментарий, optional<input name="kaspi_receipt" placeholder="Мысалы: Kaspi чек № немесе телефон"></label>
+            <button type="submit" class="publish-button magnetic">Төледім — объявлениені жариялау</button>
+          </form>
+        </div>
+      </div>
+      <details class="demo-card-details">
+        <summary>Demo картамен тест жасау</summary>
+        <form method="post" action="/payments/{{ listing.id }}" class="stack payment-form">
+          <input type="hidden" name="payment_method" value="card">
+          <label>Карта нөмірі<input name="card_number" required inputmode="numeric" placeholder="4242 4242 4242 4242"></label>
+          <label>Картадағы аты<input name="card_name" required placeholder="NURSULTAN TEST"></label>
+          <div class="grid two">
+            <label>MM/YY<input name="expiry" required placeholder="12/30"></label>
+            <label>CVC<input name="cvc" required inputmode="numeric" placeholder="123"></label>
+          </div>
+          <button type="submit">Demo карта төлемі</button>
+        </form>
+      </details>
+      <p class="note">Прототип режимі: Kaspi төлемі сайт ішінде автомат тексерілмейді. Production үшін merchant API/webhook керек.</p>
+    {% endif %}
+  </div>
+
+  <aside class="payment-info premium-side" data-reveal>
+    <h2>Kaspi төлем flow қалай жұмыс істейді?</h2>
+    <ul>
+      <li>Kaspi тек жариялау/payment қадамында көрсетіледі — басты бетте артық төлем жарнамасы жоқ.</li>
+      <li>QR нақты берілген Kaspi сілтемесіне генерацияланған.</li>
+      <li>“Kaspi Pay ашу” батырмасы жаңа вкладкада төлем бетін ашады.</li>
+      <li>“Төледім” басқанда объявление active болады.</li>
+    </ul>
+    <div class="mini-security-card">
+      <b>Production ескерту</b>
+      <span>Реалда чек автомат тексерілуі үшін Kaspi merchant webhook/status validation керек.</span>
+    </div>
+  </aside>
+</section>
+{% endblock %}

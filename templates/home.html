@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}{{ page_title|default('Авто іздеу') }} · MotoKZ{% endblock %}
+{% block content %}
+<section class="hero" data-reveal>
+  <div class="hero-copy">
+    <p class="eyebrow">Жаңа буын авто маркетплейсі</p>
+    <h1>{{ page_title|default('Көлігіңді сенімді сат. Жақсы автокөлікті тез тап.') }}</h1>
+    <p class="lead">MotoKZ — Kolesa стиліндегі толық жұмыс істейтін marketplace прототипі: жариялау, фото, характеристика, фильтр, избранное және сатушы кабинеті.</p>
+    <div class="hero-actions">
+      <a class="primary-cta magnetic" href="/listings/new">Машинамды сату</a>
+      <a class="secondary-cta" href="#catalog">Каталог көру</a>
+    </div>
+    <div class="trust-row">
+      <span>24/7 витрина</span><span>Нақты фильтр</span><span>Seller cabinet</span><span>FastAPI backend</span>
+    </div>
+  </div>
+  <div class="hero-visual" aria-label="Premium auto marketplace preview">
+    <div class="car-orbit"></div>
+    <img class="hero-car" src="/static/hero-car.svg" alt="Premium car illustration">
+    <div class="deal-card tilt-card">
+      <span>Featured</span>
+      <b>Toyota Camry 70</b>
+      <strong>14 900 000 ₸</strong>
+      <small>Алматы · 2020 · 78 000 км</small>
+    </div>
+    <div class="mini-card mini-1">−12% жақсы баға</div>
+    <div class="mini-card mini-2">78 000 км</div>
+  </div>
+</section>
+
+<section class="market-steps" data-reveal>
+  <article><span>01</span><b>Объявление</b><p>Фото жүкте, толық характеристика жаз, контактіңді қалдыр.</p></article>
+  <article><span>02</span><b>Модульдер</b><p>Каталог, фильтр, іздеу, избранное, жеке кабинет жұмыс істейді.</p></article>
+  <article><span>03</span><b>Жариялау</b><p>Төлем тек жариялау кезеңінде шығады. Басты бет таза каталогқа арналған.</p></article>
+</section>
+
+{% if not page_title %}
+<form class="filter-card" method="get" action="/" data-reveal>
+  <div class="filter-head">
+    <div><p class="eyebrow">Smart search</p><h2>Көлікті нақты параметрмен таңда</h2></div>
+    <span>{{ listings|length }} ұсыныс</span>
+  </div>
+  <div class="grid five">
+    <label>Бренд<input name="brand" value="{{ filters.brand }}" placeholder="Toyota"></label>
+    <label>Модель<input name="model" value="{{ filters.model }}" placeholder="Camry"></label>
+    <label>Қала<input name="city" value="{{ filters.city }}" placeholder="Алматы"></label>
+    <label>Мин. баға<input name="min_price" value="{{ filters.min_price }}" inputmode="numeric" placeholder="5 000 000"></label>
+    <label>Макс. баға<input name="max_price" value="{{ filters.max_price }}" inputmode="numeric" placeholder="20 000 000"></label>
+  </div>
+  <div class="grid three">
+    <label>Отын<select name="fuel"><option value="">Барлығы</option>{% for item in ['Бензин','Дизель','Газ-бензин','Гибрид','Электро'] %}<option value="{{ item }}" {% if filters.fuel == item %}selected{% endif %}>{{ item }}</option>{% endfor %}</select></label>
+    <label>Коробка<select name="transmission"><option value="">Барлығы</option>{% for item in ['Автомат','Механика','Робот','Вариатор'] %}<option value="{{ item }}" {% if filters.transmission == item %}selected{% endif %}>{{ item }}</option>{% endfor %}</select></label>
+    <label>Сортировка<select name="sort"><option value="new" {% if filters.sort == 'new' %}selected{% endif %}>Жаңасы алдымен</option><option value="price_asc" {% if filters.sort == 'price_asc' %}selected{% endif %}>Баға ↑</option><option value="price_desc" {% if filters.sort == 'price_desc' %}selected{% endif %}>Баға ↓</option><option value="year_desc" {% if filters.sort == 'year_desc' %}selected{% endif %}>Жылы жаңасы</option></select></label>
+  </div>
+  <div class="actions"><button type="submit" class="magnetic">Іздеу</button><a class="secondary-button" href="/">Тазалау</a></div>
+</form>
+{% endif %}
+
+<section class="listings-head" id="catalog" data-reveal>
+  <div><p class="eyebrow">Live catalog</p><h2>{{ listings|length }} актив объявление</h2></div>
+  <a class="secondary-button" href="/listings/new">+ Жаңа объявление</a>
+</section>
+
+<div class="cards">
+  {% for listing in listings %}
+  <article class="car-card tilt-card" data-reveal>
+    <a href="/listings/{{ listing.id }}" class="car-image">
+      {% if listing.image_path %}<img src="{{ listing.image_path }}" alt="{{ listing.title }}">{% else %}<img class="card-car-art" src="/static/card-car.svg" alt="{{ listing.brand }} {{ listing.model }}">{% endif %}
+      <span class="card-badge">{{ listing.city }}</span>
+    </a>
+    <div class="car-body">
+      <div class="card-top"><a href="/listings/{{ listing.id }}" class="car-title">{{ listing.title }}</a><form method="post" action="/listings/{{ listing.id }}/favorite"><button class="icon-button" title="Избранное" type="submit">{% if listing.id in favorite_ids %}★{% else %}☆{% endif %}</button></form></div>
+      <p class="price">{{ '{:,}'.format(listing.price).replace(',', ' ') }} ₸</p>
+      <p class="muted">{{ listing.year }} · {{ '{:,}'.format(listing.mileage).replace(',', ' ') }} км · {{ listing.body_type }}</p>
+      <p class="tags"><span>{{ listing.fuel }}</span><span>{{ listing.transmission }}</span><span>{{ listing.engine_volume }} л</span></p>
+    </div>
+  </article>
+  {% else %}
+    <div class="empty" data-reveal><h3>Әзірше объявление жоқ</h3><p>Фильтрді өзгертіп көр немесе бірінші болып машинаңды қос.</p><a class="primary-cta" href="/listings/new">Объявление қосу</a></div>
+  {% endfor %}
+</div>
+{% endblock %}

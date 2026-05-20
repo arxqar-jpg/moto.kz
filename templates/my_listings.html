@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Менің объявлениям · Moto KZ{% endblock %}
+{% block content %}
+<section class="section-title" data-reveal>
+  <p class="eyebrow">Seller dashboard</p>
+  <div class="row-title">
+    <div>
+      <h1>Менің объявлениям</h1>
+      <p>Draft болса Kaspi арқылы төле де жарияла.</p>
+    </div>
+    <a class="hero-button magnetic" href="/listings/new">+ Машина қосу</a>
+  </div>
+</section>
+
+<section class="table-card glass-card" data-reveal>
+  <table>
+    <thead>
+      <tr><th>Объявление</th><th>Баға</th><th>Статус</th><th>Әрекет</th></tr>
+    </thead>
+    <tbody>
+    {% for listing in listings %}
+      <tr>
+        <td><b>{{ listing.title }}</b><br><span class="muted">{{ listing.city }} · {{ listing.year }}</span></td>
+        <td>{{ '{:,}'.format(listing.price).replace(',', ' ') }} ₸</td>
+        <td><span class="status {% if listing.is_active %}active{% else %}draft{% endif %}">{% if listing.is_active %}Жарияланған{% else %}Kaspi төлем керек{% endif %}</span></td>
+        <td class="table-actions">
+          <a class="secondary-button" href="/listings/{{ listing.id }}">Көру</a>
+          <a class="secondary-button" href="/listings/{{ listing.id }}/edit">Өңдеу</a>
+          {% if not listing.is_active %}<a class="kaspi-button" href="/payments/{{ listing.id }}"><img src="/static/kaspi-logo.svg" alt="Kaspi"> Төлеу</a>{% endif %}
+          <form method="post" action="/listings/{{ listing.id }}/delete" onsubmit="return confirm('Өшіруге сенімдісіз бе?')">
+            <button class="danger small" type="submit">Өшіру</button>
+          </form>
+        </td>
+      </tr>
+    {% else %}
+      <tr><td colspan="4" class="empty-cell">Әлі объявление жоқ.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

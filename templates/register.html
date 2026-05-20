@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Тіркелу · Moto KZ{% endblock %}
+{% block content %}
+<section class="auth-card">
+  <h1>Тіркелу</h1>
+  <form method="post" action="/register" class="stack">
+    <label>Атыңыз<input name="name" required placeholder="Нұрсұлтан"></label>
+    <label>Email<input type="email" name="email" required placeholder="you@email.com"></label>
+    <label>Пароль<input type="password" name="password" minlength="6" required placeholder="кемі 6 символ"></label>
+    <button type="submit">Аккаунт ашу</button>
+  </form>
+  <p class="muted center">Аккаунт бар ма? <a href="/login">Кіру</a></p>
+</section>
+{% endblock %}

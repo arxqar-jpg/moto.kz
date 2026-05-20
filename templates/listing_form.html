@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}{% if mode == 'edit' %}Өңдеу{% else %}Объявление қосу{% endif %} · Moto KZ{% endblock %}
+{% block content %}
+<section class="form-shell">
+  <div class="section-title">
+    <p class="eyebrow">Seller cabinet</p>
+    <h1>{% if mode == 'edit' %}Объявление өңдеу{% else %}Машинаңды сатуға қою{% endif %}</h1>
+    <p>Барлық характеристиканы толық жазсаң, покупатель тезірек хабарласады. Сақтағаннан кейін жариялау төлемі беті ашылады.</p>
+  </div>
+
+  <form class="listing-form glass-card" data-reveal method="post" enctype="multipart/form-data" action="{% if mode == 'edit' %}/listings/{{ listing.id }}/edit{% else %}/listings{% endif %}">
+    <div class="grid two">
+      <label>Заголовок<input name="title" required value="{{ listing.title if listing else '' }}" placeholder="Toyota Camry 70, идеал"></label>
+      <label>Қала<input name="city" required value="{{ listing.city if listing else '' }}" placeholder="Алматы"></label>
+      <label>Бренд<input name="brand" required value="{{ listing.brand if listing else '' }}" placeholder="Toyota"></label>
+      <label>Модель<input name="model" required value="{{ listing.model if listing else '' }}" placeholder="Camry"></label>
+      <label>Жылы<input type="number" name="year" required min="1950" max="2030" value="{{ listing.year if listing else '' }}" placeholder="2020"></label>
+      <label>Баға, ₸<input type="number" name="price" required min="1" value="{{ listing.price if listing else '' }}" placeholder="14900000"></label>
+      <label>Пробег, км<input type="number" name="mileage" min="0" value="{{ listing.mileage if listing else '0' }}" placeholder="78000"></label>
+      <label>Мотор көлемі<input name="engine_volume" required value="{{ listing.engine_volume if listing else '' }}" placeholder="2.5"></label>
+      <label>Кузов
+        <select name="body_type">
+          {% for item in ['Седан','Кроссовер','Внедорожник','Хэтчбек','Универсал','Купе','Пикап','Минивэн'] %}
+            <option value="{{ item }}" {% if listing and listing.body_type == item %}selected{% endif %}>{{ item }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>Отын
+        <select name="fuel">
+          {% for item in ['Бензин','Дизель','Газ-бензин','Гибрид','Электро'] %}
+            <option value="{{ item }}" {% if listing and listing.fuel == item %}selected{% endif %}>{{ item }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>Коробка
+        <select name="transmission">
+          {% for item in ['Автомат','Механика','Робот','Вариатор'] %}
+            <option value="{{ item }}" {% if listing and listing.transmission == item %}selected{% endif %}>{{ item }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>Түсі<input name="color" required value="{{ listing.color if listing else '' }}" placeholder="Қара"></label>
+      <label>Телефон<input name="phone" required value="{{ listing.phone if listing else '' }}" placeholder="+7 777 111 22 33"></label>
+      <label>Фото<input type="file" name="image" accept="image/*"></label>
+    </div>
+    <label>Описание<textarea name="description" rows="6" placeholder="Состояние, комплектация, ДТП бар/жоқ, торг...">{{ listing.description if listing else '' }}</textarea></label>
+    <div class="actions">
+      <button type="submit">{% if mode == 'edit' %}Сақтау{% else %}Сақтау және Kaspi төлемге өту{% endif %}</button>
+      <a class="secondary-button" href="/my-listings">Артқа</a>
+    </div>
+  </form>
+</section>
+{% endblock %}
